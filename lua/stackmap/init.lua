@@ -28,11 +28,13 @@ end
 
 M.push = function(name, mode, mappings)
 	local maps = vim.api.nvim_get_keymap(mode)
+	P(maps)
 	local existing_maps = {}
 
 	for lhs, rhs in pairs(mappings) do
 		local existing = find_mapping(maps, lhs)
 		if existing then
+			P(existing)
 			existing_maps[lhs] = existing
 		end
 	end
@@ -59,7 +61,11 @@ M.pop = function(name)
 			-- handle mappings that existed
 			local og_mapping = existing[lhs]
 			-- TODO: Handle options from the table
-			vim.keymap.set(state.mode, lhs, og_mapping.rhs)
+			P(state)
+			P(lhs)
+			P(og_mapping)
+
+			vim.keymap.set(state.mode, lhs, og_mapping.rhs and og_mapping.lhs or og_mapping.callback)
 		else
 			-- handle mappings that didn't exists
 			vim.keymap.del(state.mode, lhs)
@@ -75,6 +81,7 @@ M.push("debug_mode", "n", {
 	[" st"] = "echo 'hello'",
 	[" sz"] = "echo 'goodbye'",
 })
+
 M.pop("debug_mode")
 
 return M
