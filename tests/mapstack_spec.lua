@@ -43,7 +43,7 @@ describe("stackmap", function()
 		assert.are.same(rhs .. "2", found_2.rhs)
 	end)
 
-	it("delete mapping with pop, existing: no", function()
+	it("delete mapping with pop, existing: yes", function()
 		local rhs = 'echo "this is a test|"'
 
 		require("stackmap").push("test1", "n", { asdf = rhs })
@@ -52,7 +52,7 @@ describe("stackmap", function()
 		local found = find_map("asdf")
 
 		assert.are.same(rhs, found.rhs)
-		require("stackmap").pop("test1")
+		require("stackmap").pop("test1", "n")
 		local after_pop = find_map("asdf")
 		assert.are.same(after_pop, nil)
 	end)
@@ -68,7 +68,7 @@ describe("stackmap", function()
 		local found = find_map("asdf")
 
 		assert.are.same(rhs, found.rhs)
-		require("stackmap").pop("test1")
+		require("stackmap").pop("test1", "n")
 		local after_pop = find_map("asdf")
 		assert.are.same(after_pop.rhs, rhs_og)
 	end)

@@ -37,8 +37,8 @@ M.push = function(name, mode, mappings)
 		end
 	end
 
-	M._stack[name] = {
-		mode = mode,
+	M._stack[name] = M._stack[name] or {}
+	M._stack[name][mode] = {
 		existing = existing_maps,
 		mappings = mappings,
 	}
@@ -49,21 +49,21 @@ M.push = function(name, mode, mappings)
 	end
 end
 
-M.pop = function(name)
-	local state = M._stack[name]
-	M._stack[name] = nil
+M.pop = function(name, mode)
+	local state = M._stack[name][mode]
+	M._stack[name][mode] = nil
 	local existing = state.existing
 
-	for lhs, rhs in pairs(state.mappings) do
+	for lhs in pairs(state.mappings) do
 		if existing[lhs] then
 			-- handle mappings that existed
 			local og_mapping = existing[lhs]
 			-- TODO: Handle options from the table
 
-			vim.keymap.set(state.mode, lhs, og_mapping.rhs and og_mapping.lhs or og_mapping.callback)
+			vim.keymap.set(mode, lhs, og_mapping.rhs or og_mapping.callback)
 		else
 			-- handle mappings that didn't exists
-			vim.keymap.del(state.mode, lhs)
+			vim.keymap.del(mode, lhs)
 		end
 	end
 end
@@ -77,7 +77,7 @@ M.push("debug_mode", "n", {
 	[" sz"] = "echo 'goodbye'",
 })
 
-M.pop("debug_mode")
+M.pop("debug_mode", "n")
 
 return M
 
