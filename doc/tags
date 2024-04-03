@@ -1,0 +1,3 @@
+stackmap.pop	stackmap.txt	/*stackmap.pop*
+stackmap.push	stackmap.txt	/*stackmap.push*
+telescope.nvim	stackmap.txt	/*telescope.nvim*
